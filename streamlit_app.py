@@ -22,8 +22,8 @@ smoothie_recepies = 'https://uni-lab-files.s3.us-west-2.amazonaws.com/dabw/fruit
 my_fruit_list = pd.read_csv(smoothie_recepies)
 my_fruit_list = my_fruit_list.set_index('Fruit')
 
-# display the table on the page
-streamlit.dataframe(my_fruit_list)
+# add fruit selection dropdown box - set default avocardo and strawberries
+choices = streamlit.multiselect("Pick some fruits:", list(my_fruit_list.index), ['Avocardo', Strawberries'])
 
-# add fruit selection dropdown box
-streamlit.multiselect("Pick some fruits:", list(my_fruit_list.index))
+# display the table with the chosen fruits on the page
+streamlit.dataframe(my_fruit_list)
