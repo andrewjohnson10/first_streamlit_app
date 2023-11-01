@@ -1,6 +1,7 @@
 
 import streamlit
 import pandas as pd
+import requests 
 
 # create title for application
 streamlit.title('My parents healthy diner')
@@ -28,3 +29,15 @@ fruits_to_show = my_fruit_list.loc[fruits_selected]
 
 # display the table with the chosen fruits on the page
 streamlit.dataframe(fruits_to_show)
+
+# add section to use get fruit info from fruityvice via the fruityvice API
+streamlit.header('Fruit advice from the Fruityvice website') 
+fruit_choice = streamlit.text_input('Enter name of fruit to query', 'Kiwi')
+streamlit.write('the user entered :', fruit_choice)
+
+# get the fruit information for the users fruit choice
+responce = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
+
+#render it in the webpage as a dataframe
+responce_normalised = pd.json_normalize(responce.json())
+streamlit.dataframe(responce_normalised)
