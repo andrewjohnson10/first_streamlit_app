@@ -75,6 +75,7 @@ except URLError as e:
 if streamlit.button('Get the fruit load list'):
     my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
     my_data_rows = get_fruit_load_list()
+    my_cnx.close()
     streamlit.dataframe(my_data_rows)
 
 # add option for user to add a fruit and to store it in snowflake
@@ -84,25 +85,10 @@ add_my_fruit = streamlit.text_input('Enter name of fruit to add to snowflake tab
 if streamlit.button('Add a fruit to the list'):
     my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
     back_from_function = insert_row_snowflake(add_my_fruit)
+    my_cnx.close()
     streamlit.text(back_from_function)
 
 
-
-# stop after here
-streamlit.stop()
-
-# connect to snowflake and create cursor object
-my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
-my_cur = my_cnx.cursor()
-my_cur.execute("SELECT * from fruit_load_list")
-my_data_rows = my_cur.fetchall()
-streamlit.header("The fruit load list contains:")
-streamlit.dataframe(my_data_rows)
-
-
-
-streamlit.write('Enter name of fruit to add to snowflake table', add_my_fruit)
-my_cur.execute("insert into PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST values ('from streamlit')")
 
 
 
