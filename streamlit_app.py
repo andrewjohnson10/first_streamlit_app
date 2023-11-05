@@ -43,9 +43,20 @@ responce = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
 responce_normalised = pd.json_normalize(responce.json())
 streamlit.dataframe(responce_normalised)
 
+# connect to snowflake and create cursor object
 my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
 my_cur = my_cnx.cursor()
+
+# add option for user to add a fruit and to store it in snowflake
+add_fruit = streamlit.text_input('Enter name of fruit to add to snowflake table', ' ')
+my_cur.execute("insert into PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST values(" & add_fruit & ")")
+
 my_cur.execute("SELECT * from fruit_load_list")
 my_data_rows = my_cur.fetchall()
 streamlit.header("The fruit load list contains:")
 streamlit.dataframe(my_data_rows)
+
+
+
+
+
