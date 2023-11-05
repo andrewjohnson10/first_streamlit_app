@@ -5,6 +5,7 @@ import requests
 import snowflake.connector
 from urllib.error import URLError
 
+
 # fruityvice data
 def get_fruityvice_data(this_fruit_choice):
     responce = requests.get("https://fruityvice.com/api/fruit/" + this_fruit_choice)
@@ -16,6 +17,14 @@ def get_fruit_load_list():
     with my_cnx.cursor() as my_cur:
         my_cur.execute("SELECT * from fruit_load_list")
         return my_cur.fetchall()
+
+# add a fruit to the snowflake table
+def insert_row_snowflake(new_fruit):
+    with my_cnx.cursor() as my_cur:
+        my_cur.execute("insert into fruit_load_list values ('" + new_fruit + "')")
+        return "thanks for adding " + new_fruit
+    
+
 
 
 # create title for application
@@ -62,11 +71,20 @@ except URLError as e:
   streamlit.error()  
 
 
-# add button to load the fruit
+# add button to load the fruit list from snowflake
 if streamlit.button('Get the fruit load list'):
     my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
     my_data_rows = get_fruit_load_list()
     streamlit.dataframe(my_data_rows)
+
+# add option for user to add a fruit and to store it in snowflake
+add_my_fruit = streamlit.text_input('Enter name of fruit to add to snowflake table', ' ')
+
+# add new fruit to the snowflake fruitlist
+if streamlit.button('Add a fruit to the list'):
+    my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+    back_from_function = insert_row_snowflake(add_my_fruit)
+    streamlit.text(back_from_function)
 
 
 
@@ -82,8 +100,7 @@ streamlit.header("The fruit load list contains:")
 streamlit.dataframe(my_data_rows)
 
 
-# add option for user to add a fruit and to store it in snowflake
-add_my_fruit = streamlit.text_input('Enter name of fruit to add to snowflake table', 'Kiwi')
+
 streamlit.write('Enter name of fruit to add to snowflake table', add_my_fruit)
 my_cur.execute("insert into PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST values ('from streamlit')")
 
