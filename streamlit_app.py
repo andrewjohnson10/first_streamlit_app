@@ -48,8 +48,9 @@ my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
 my_cur = my_cnx.cursor()
 
 # add option for user to add a fruit and to store it in snowflake
-add_fruit = streamlit.text_input('Enter name of fruit to add to snowflake table', ' ')
-my_cur.execute("insert into PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST values('" & add_fruit & "')")
+add_my_fruit = streamlit.text_input('Enter name of fruit to add to snowflake table', 'Kiwi')
+streamlit.write('Enter name of fruit to add to snowflake table', add_my_fruit)
+my_cur.execute("insert into PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST values ('from streamlit')")
 
 my_cur.execute("SELECT * from fruit_load_list")
 my_data_rows = my_cur.fetchall()
